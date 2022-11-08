@@ -46,8 +46,9 @@ class BasicCardDetector:
         thresh = cv2.erode(thresh, self.kenel, iterations = 1)
         return thresh
     
-    def getCardName(self, img):
-        cont, hierarchy = cv2.findContours(preProcess(np.copy(img)), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    def getCardName(self, inImg):
+        img = np.copy(inImg)
+        cont, hierarchy = cv2.findContours(self.preProcess(np.copy(img)), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
         for i in range(len(cont)):
             c = cont[i]
@@ -55,6 +56,22 @@ class BasicCardDetector:
             #No children (open shape)
             if h[2] == -1:
                 continue
+            if cv2.contourArea(c)/(img.shape[0]*img.shape[1]) < 0.04:
+                continue
+            
+            x, y, w, h = cv2.boundingRect(c)
+            
+            img = img[y:y+h, x:x+w]
+            
+            name = pt.image_to_string(img, config = r"--oem 3 --psm 6")
+            
+            if "\n" not in name:
+                split = name.split()
+                if "-" not in split:
+                    return name
+            
+            
+            
             
             
         
