@@ -55,4 +55,6 @@ class BasicCardDetector:
             #No children (open shape)
             if h[2] == -1:
                 continue
+            
+            
         
